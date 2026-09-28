@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personal Information Quiz - English Learning Hub</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .glass-card {
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .drop-zone-active {
+      border-color: #818cf8 !important;
+      background-color: rgba(99, 102, 241, 0.2) !important;
+      box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+    }
+    /* Native Print Styles for PDF Export */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .glass-card {
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        color: #000000 !important;
+        backdrop-filter: none !important;
+        box-shadow: none !important;
+      }
+      .print-text-dark {
+        color: #0f172a !important;
+      }
+      .print-border {
+        border: 1px solid #cbd5e1 !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white antialiased">
+
+  <!-- Main Container Wrapper -->
+  <div class="max-w-4xl w-full mx-auto p-4 md:p-6 flex-grow flex flex-col justify-center">
+    
+    <!-- Branding Header -->
+    <header class="flex items-center justify-between py-4 mb-6 border-b border-slate-800/80">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-indigo-400 shadow-lg shadow-indigo-500/10">
+          <i class="fas fa-graduation-cap text-xl"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">English Learning Hub</h1>
+          <p class="text-xs font-medium text-indigo-300/80 tracking-wide">Interactive Practice</p>
+        </div>
+      </div>
+      <div id="quizHeaderBadge" class="hidden text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-800/80 text-indigo-300 border border-indigo-500/30 shadow-sm">
+        CEFR A1/A2 Beginner
+      </div>
+    </header>
+
+    <!-- App Screen Container -->
+    <main id="appContainer" class="w-full"></main>
+
+  </div>
+
+  <!-- JavaScript Application Logic -->
+  <script>
+    // --- Quiz Data (Anonymized & Secured) ---
+    const quizQuestions = [
+      {
+        id: 1,
+        type: "mcq",
+        badge: "Multiple Choice",
+        question: "Which response correctly answers the question: 'What is your full name?'",
+        options: [
+          "My name is John Michael Smith.",
+          "I am 30 years old.",
+          "I am from Canada.",
+          "I speak English."
+        ],
+        correctAnswer: 0,
+        hint: "Look for the sentence that provides a complete name including first and surnames.",
+        rationale: "'My name is John Michael Smith' provides the full name, while the others state age, origin, or language."
+      },
+      {
+        id: 2,
+        type: "cloze",
+        badge: "Fill-in-the-Blank",
+        question: "Complete the question about origin:\n'Where _____ you from?'",
+        correctAnswer: "are",
+        placeholder: "Type the missing verb...",
+        hint: "Use the present tense form of the verb 'to be' that matches the pronoun 'you'.",
+        rationale: "We use the verb 'are' with 'you' when asking origin: 'Where are you from?'"
+      },
+      {
+        id: 3,
+        type: "scramble",
+        badge: "Word Scramble",
+        question: "Reorder the words to build a question asking how to spell something:",
+        scrambleWords: ["How", "do", "you", "spell", "that?"],
+        correctAnswer: "How do you spell that?",
+        hint: "Start with 'How' and end with 'that?'",
+        rationale: "'How do you spell that?' is the standard phrase used to request the spelling of a name or word."
+      },
+      {
+        id: 4,
+        type: "matching",
+        badge: "Matching",
+        question: "Match each question on the left with its correct thematic category on the right:",
+        pairs: [
+          { left: "What is your profession?", right: "Work & Occupation" },
+          { left: "What is your nationality?", right: "Origin & Country" },
+          { left: "What is your marital status?", right: "Personal Life" },
+          { left: "What is your country code?", right: "Contact Details" }
+        ],
+        hint: "Click a question on the left, then click its corresponding topic area on the right.",
+        rationale: "Personal information covers diverse areas such as contact numbers, job titles, relationship status, and nationality."
+      },
+      {
+        id: 5,
+        type: "categorization",
+        badge: "Categorization",
+        question: "Sort each piece of data into the correct category: 'Contact Information' or 'Personal Details'.",
+        categories: ["Contact Information", "Personal Details"],
+        items: [
+          { text: "It is contact@example.com", category: "Contact Information" },
+          { text: "I am 30 years old.", category: "Personal Details" },
+          { text: "It is +1.", category: "Contact Information" },
+          { text: "I am single.", category: "Personal Details" }
+        ],
+        hint: "Emails and country codes are used for contacting someone, whereas age and marital status describe personal background.",
+        rationale: "Phone country codes and emails belong to contact information, while age and marital status are personal details."
+      },
+      {
+        id: 6,
+        type: "sequencing",
+        badge: "Sequencing",
+        question: "Arrange the conversation lines into the correct logical order:",
+        steps: [
+          "Person A: Hello! What is your name?",
+          "Person B: My name is Alex.",
+          "Person A: Where are you from, Alex?",
+          "Person B: I am from Canada."
+        ],
+        hint: "Start with an initial greeting and name inquiry before moving on to origin.",
+        rationale: "A natural dialogue begins with a greeting and name exchange, followed by origin questions."
+      },
+      {
+        id: 7,
+        type: "mcq",
+        badge: "Multiple Choice",
+        question: "Which question asks about someone's job or work?",
+        options: [
+          "What do you do for a living?",
+          "How old are you?",
+          "What is your middle name?",
+          "What is your area code?"
+        ],
+        correctAnswer: 0,
+        hint: "Look for keywords related to work or occupation.",
+        rationale: "'What do you do for a living?' is a common conversational question used to ask about a person's profession."
+      },
+      {
+        id: 8,
+        type: "cloze",
+        badge: "Fill-in-the-Blank",
+        question: "Fill in the missing verb:\n'What languages do you _____?'",
+        correctAnswer: "speak",
+        placeholder: "Type the missing verb...",
+        hint: "Use the action verb associated with communicating in different languages.",
+        rationale: "We use the verb 'speak' when asking about languages: 'What languages do you speak?'"
+      },
+      {
+        id: 9,
+        type: "scramble",
+        badge: "Word Scramble",
+        question: "Reorder the tiles to state your birthplace:",
+        scrambleWords: ["I", "was", "born", "in", "London."],
+        correctAnswer: "I was born in London.",
+        hint: "Start with the pronoun 'I' and end with the city name 'London.'",
+        rationale: "'I was born in [City]' is the correct grammatical structure for stating your birthplace."
+      },
+      {
+        id: 10,
+        type: "matching",
+        badge: "Matching",
+        question: "Match each personal information question with its most suitable answer:",
+        pairs: [
+          { left: "How old are you?", right: "I am 30 years old." },
+          { left: "What is your email address?", right: "It is contact.user@example.com." },
+          { left: "What is your cellphone number?", right: "It is 555-019-2834." },
+          { left: "What is your native language?", right: "My native language is English." }
+        ],
+        hint: "Match age questions to ages, email questions to email addresses, and phone questions to digits.",
+        rationale: "Correctly matching questions to their corresponding answers ensures you can share personal data accurately in English."
+      }
+    ];
+
+    // --- State Management ---
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let secondsElapsed = 0;
+    let timerInterval = null;
+    let isSubmitted = false;
+    let userAnswers = [];
+
+    // Interactive Question States
+    let selectedMcqOption = null;
+    let scrambleAvailable = [];
+    let scrambleSelected = [];
+    let userMatches = {}; 
+    let selectedLeftMatch = null;
+    let categoryAssignments = {}; 
+    let selectedCategoryItem = null;
+    let currentSequence = [];
+    let draggedItemIndex = null;
+    let rightPairsShuffled = [];
+
+    // --- Core Functions ---
+
+    function renderWelcomeScreen() {
+      document.getElementById('quizHeaderBadge').classList.add('hidden');
+      const app = document.getElementById('appContainer');
+      app.innerHTML = `
+        <div class="glass-card rounded-2xl p-6 md:p-10 shadow-2xl border border-slate-800/80 text-center space-y-8 animate-fade-in">
+          <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 shadow-inner">
+            <i class="fas fa-id-card text-3xl"></i>
+          </div>
+          
+          <div class="space-y-2">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">Personal Information Quiz</h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
+            <div class="glass-card rounded-xl p-4 border border-slate-800 bg-slate-900/60 flex items-start gap-3">
+              <div class="p-2.5 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                <i class="fas fa-list-check text-lg"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-semibold text-slate-200">Format</h3>
+                <p class="text-xs text-slate-400 mt-0.5">10 Interactive Questions</p>
+              </div>
+            </div>
+
+            <div class="glass-card rounded-xl p-4 border border-slate-800 bg-slate-900/60 flex items-start gap-3">
+              <div class="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <i class="fas fa-trophy text-lg"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-semibold text-slate-200">Scoring</h3>
+                <p class="text-xs text-slate-400 mt-0.5">+10 Points per correct answer</p>
+              </div>
+            </div>
+
+            <div class="glass-card rounded-xl p-4 border border-slate-800 bg-slate-900/60 flex items-start gap-3">
+              <div class="p-2.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                <i class="fas fa-lightbulb text-lg"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-semibold text-slate-200">Feedback</h3>
+                <p class="text-xs text-slate-400 mt-0.5">Instant explanations & hints</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-4">
+            <button id="startQuizBtn" onclick="startQuiz()" class="w-full md:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-lg shadow-lg shadow-indigo-600/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-3 mx-auto">
+              <span>Start Quiz Now</span>
+              <i class="fas fa-arrow-right text-sm"></i>
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function startQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      secondsElapsed = 0;
+      userAnswers = [];
+      document.getElementById('quizHeaderBadge').classList.remove('hidden');
+
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        secondsElapsed++;
+        const timerEl = document.getElementById('timerDisplay');
+        if (timerEl) {
+          const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
+          const secs = String(secondsElapsed % 60).padStart(2, '0');
+          timerEl.textContent = `${mins}:${secs}`;
+        }
+      }, 1000);
+
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      isSubmitted = false;
+      const q = quizQuestions[currentQuestionIndex];
+      const progressPercent = ((currentQuestionIndex + 1) / quizQuestions.length) * 100;
+
+      selectedMcqOption = null;
+      userMatches = {};
+      selectedLeftMatch = null;
+      categoryAssignments = {};
+      selectedCategoryItem = null;
+
+      if (q.type === 'scramble') {
+        scrambleAvailable = [...q.scrambleWords].sort(() => Math.random() - 0.5);
+        scrambleSelected = [];
+      } else if (q.type === 'matching') {
+        rightPairsShuffled = q.pairs.map((p, idx) => ({ text: p.right, originalIdx: idx }))
+                                   .sort(() => Math.random() - 0.5);
+      } else if (q.type === 'sequencing') {
+        currentSequence = [...q.steps].sort(() => Math.random() - 0.5);
+      }
+
+      const app = document.getElementById('appContainer');
+      app.innerHTML = `
+        <div id="quizScreen" class="space-y-6">
+          <!-- Top Bar -->
+          <div class="glass-card rounded-2xl p-4 md:p-5 flex flex-wrap items-center justify-between gap-4 border border-slate-800">
+            <div class="flex items-center gap-3">
+              <span class="text-xs font-semibold px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                Question ${currentQuestionIndex + 1} of ${quizQuestions.length}
+              </span>
+              <span class="text-xs font-semibold px-3 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+                ${q.badge}
+              </span>
+            </div>
+
+            <div class="flex items-center gap-6">
+              <div class="flex items-center gap-2 text-sm font-semibold text-emerald-400">
+                <i class="fas fa-star text-amber-400"></i>
+                <span>Score: <span id="scoreDisplay">${score}</span> pts</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm font-mono text-slate-300">
+                <i class="far fa-clock text-indigo-400"></i>
+                <span id="timerDisplay">${String(Math.floor(secondsElapsed / 60)).padStart(2, '0')}:${String(secondsElapsed % 60).padStart(2, '0')}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="h-2 w-full bg-slate-800/80 rounded-full overflow-hidden border border-slate-800">
+            <div class="h-full bg-gradient-to-r from-indigo-500 to-cyan-400 transition-all duration-300" style="width: ${progressPercent}%"></div>
+          </div>
+
+          <!-- Question Card -->
+          <div class="glass-card rounded-2xl p-6 md:p-8 space-y-6 border border-slate-800/80 shadow-xl">
+            <div class="space-y-3">
+              <h3 class="text-xl md:text-2xl font-bold text-white leading-relaxed">${q.question.replace(/\n/g, '<br>')}</h3>
+              
+              <!-- Hint Toggle -->
+              <div>
+                <button onclick="toggleHint()" class="inline-flex items-center gap-2 text-xs font-semibold text-amber-400/90 hover:text-amber-300 transition-colors">
+                  <i class="fas fa-lightbulb"></i>
+                  <span>Need a hint?</span>
+                </button>
+                <div id="hintBox" class="hidden mt-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-200">
+                  ${q.hint}
+                </div>
+              </div>
+            </div>
+
+            <!-- Dynamic Interactive Container -->
+            <div id="answerContainer" class="pt-2"></div>
+
+            <!-- Rationale / Feedback Container -->
+            <div id="feedbackBox" class="hidden p-5 rounded-xl border transition-all space-y-2"></div>
+
+            <!-- Action Controls -->
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-800/80">
+              <button id="submitBtn" onclick="submitAnswer()" class="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm shadow-lg shadow-indigo-600/30 transition-all flex items-center gap-2">
+                <span>Submit Answer</span>
+                <i class="fas fa-check text-xs"></i>
+              </button>
+              <button id="nextBtn" onclick="nextQuestion()" class="hidden px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg shadow-emerald-600/30 transition-all flex items-center gap-2">
+                <span>${currentQuestionIndex === quizQuestions.length - 1 ? 'Finish Quiz' : 'Next Question'}</span>
+                <i class="fas fa-arrow-right text-xs"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      renderAnswerContainer();
+    }
+
+    function toggleHint() {
+      const box = document.getElementById('hintBox');
+      if (box) box.classList.toggle('hidden');
+    }
+
+    // --- Render Interactive Question Components ---
+
+    function renderAnswerContainer() {
+      const q = quizQuestions[currentQuestionIndex];
+      const container = document.getElementById('answerContainer');
+      if (!container) return;
+
+      if (q.type === 'mcq') {
+        container.innerHTML = `
+          <div class="grid grid-cols-1 gap-3">
+            ${q.options.map((opt, idx) => `
+              <button onclick="selectMcqOption(${idx})" id="mcq-opt-${idx}" class="w-full text-left p-4 rounded-xl glass-card border border-slate-800 hover:border-indigo-500/50 transition-all flex items-center gap-3">
+                <span class="w-7 h-7 rounded-lg bg-slate-800 text-slate-300 font-bold text-xs flex items-center justify-center border border-slate-700">
+                  ${String.fromCharCode(65 + idx)}
+                </span>
+                <span class="text-sm font-medium text-slate-200">${opt}</span>
+              </button>
+            `).join('')}
+          </div>
+        `;
+      } else if (q.type === 'cloze') {
+        container.innerHTML = `
+          <div class="max-w-md space-y-2">
+            <label class="block text-xs font-semibold text-slate-400">Your Answer:</label>
+            <input type="text" id="clozeInput" placeholder="${q.placeholder}" class="w-full px-4 py-3 rounded-xl bg-slate-900/90 border border-slate-700 text-white text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all" />
+          </div>
+        `;
+      } else if (q.type === 'scramble') {
+        container.innerHTML = `
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-400">Constructed Sentence:</span>
+              <button onclick="resetScramble()" class="text-xs font-semibold text-rose-400 hover:text-rose-300 flex items-center gap-1">
+                <i class="fas fa-undo"></i> Reset
+              </button>
+            </div>
+            
+            <div id="scrambleSelectedContainer" class="min-h-[60px] p-3 rounded-xl bg-slate-900/90 border-2 border-dashed border-slate-700 flex flex-wrap gap-2 items-center"></div>
+
+            <span class="block text-xs font-semibold text-slate-400 pt-2">Available Word Tiles (Click or type to add):</span>
+            <div id="scrambleAvailableContainer" class="flex flex-wrap gap-2"></div>
+          </div>
+        `;
+        renderScrambleTiles();
+      } else if (q.type === 'matching') {
+        container.innerHTML = `
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="space-y-3">
+              <h4 class="text-xs font-bold uppercase text-indigo-400 tracking-wider">Questions / Items</h4>
+              ${q.pairs.map((p, idx) => `
+                <button id="match-left-${idx}" onclick="selectLeftMatch(${idx})" class="w-full text-left p-3.5 rounded-xl bg-indigo-950/80 border border-indigo-500/40 text-indigo-100 hover:border-cyan-400 transition-all text-xs font-medium flex items-center justify-between">
+                  <span>${p.left}</span>
+                  <span id="match-badge-left-${idx}" class="hidden text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-400/20 text-cyan-300 border border-cyan-400/40">Linked</span>
+                </button>
+              `).join('')}
+            </div>
+
+            <div class="space-y-3">
+              <h4 class="text-xs font-bold uppercase text-emerald-400 tracking-wider">Answers / Categories</h4>
+              ${rightPairsShuffled.map((item, rightIdx) => `
+                <button id="match-right-${rightIdx}" onclick="selectRightMatch(${rightIdx})" class="w-full text-left p-3.5 rounded-xl bg-slate-900/80 border border-slate-700 text-slate-200 hover:border-emerald-500 transition-all text-xs font-medium flex items-center justify-between">
+                  <span>${item.text}</span>
+                  <span id="match-badge-right-${rightIdx}" class="hidden text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">Linked</span>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else if (q.type === 'categorization') {
+        container.innerHTML = `
+          <div class="space-y-6">
+            <div class="space-y-2">
+              <span class="text-xs font-semibold text-slate-400">Data to Categorize (Drag or click to select):</span>
+              <div id="categoryPool" class="flex flex-wrap gap-2 min-h-[50px] p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+                ${q.items.map((item, idx) => `
+                  <div id="cat-item-${idx}" draggable="true" ondragstart="handleDragStart(event, ${idx})" onclick="selectCategoryItem(${idx})" class="cursor-pointer px-3 py-2 rounded-lg bg-indigo-900/60 border border-indigo-500/40 text-xs text-indigo-100 font-medium hover:border-indigo-400 transition-all shadow-sm">
+                    ${item.text}
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              ${q.categories.map(cat => `
+                <div ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, '${cat}')" onclick="assignCategoryItem('${cat}')" class="p-4 rounded-xl bg-slate-900/60 border-2 border-dashed border-slate-700 space-y-3 min-h-[120px] transition-all">
+                  <h4 class="text-xs font-bold uppercase text-indigo-300 tracking-wider flex items-center gap-2">
+                    <i class="fas fa-folder text-indigo-400"></i>
+                    <span>${cat}</span>
+                  </h4>
+                  <div id="cat-zone-${cat.replace(/\s+/g, '')}" class="space-y-2"></div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else if (q.type === 'sequencing') {
+        renderSequencingList();
+      }
+    }
+
+    // --- Interactive Helper Functions ---
+
+    function selectMcqOption(idx) {
+      if (isSubmitted) return;
+      selectedMcqOption = idx;
+      const q = quizQuestions[currentQuestionIndex];
+      q.options.forEach((_, i) => {
+        const btn = document.getElementById(`mcq-opt-${i}`);
+        if (btn) {
+          if (i === idx) {
+            btn.className = "w-full text-left p-4 rounded-xl bg-indigo-900/60 border-2 border-indigo-500 transition-all flex items-center gap-3 shadow-md shadow-indigo-500/10";
+          } else {
+            btn.className = "w-full text-left p-4 rounded-xl glass-card border border-slate-800 hover:border-indigo-500/50 transition-all flex items-center gap-3 opacity-70";
+          }
+        }
+      });
+    }
+
+    function renderScrambleTiles() {
+      const selectedContainer = document.getElementById('scrambleSelectedContainer');
+      const availableContainer = document.getElementById('scrambleAvailableContainer');
+      if (!selectedContainer || !availableContainer) return;
+
+      selectedContainer.innerHTML = scrambleSelected.map((word, idx) => `
+        <button onclick="removeScrambleTile(${idx})" class="px-3 py-2 rounded-lg bg-indigo-600 border border-indigo-400 text-white text-xs font-semibold shadow-md flex items-center gap-1.5 hover:bg-indigo-500 transition-all">
+          <span>${word}</span>
+          <i class="fas fa-times text-[10px] opacity-70"></i>
+        </button>
+      `).join('');
+
+      availableContainer.innerHTML = scrambleAvailable.map((word, idx) => `
+        <button onclick="addScrambleTile(${idx})" class="px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 hover:border-indigo-500 text-slate-200 text-xs font-semibold transition-all">
+          ${word}
+        </button>
+      `).join('');
+    }
+
+    function addScrambleTile(idx) {
+      if (isSubmitted) return;
+      const word = scrambleAvailable.splice(idx, 1)[0];
+      scrambleSelected.push(word);
+      renderScrambleTiles();
+    }
+
+    function removeScrambleTile(idx) {
+      if (isSubmitted) return;
+      const word = scrambleSelected.splice(idx, 1)[0];
+      scrambleAvailable.push(word);
+      renderScrambleTiles();
+    }
+
+    function resetScramble() {
+      if (isSubmitted) return;
+      const q = quizQuestions[currentQuestionIndex];
+      scrambleAvailable = [...q.scrambleWords].sort(() => Math.random() - 0.5);
+      scrambleSelected = [];
+      renderScrambleTiles();
+    }
+
+    function selectLeftMatch(leftIdx) {
+      if (isSubmitted) return;
+      selectedLeftMatch = leftIdx;
+      const q = quizQuestions[currentQuestionIndex];
+      q.pairs.forEach((_, i) => {
+        const btn = document.getElementById(`match-left-${i}`);
+        if (btn) {
+          if (i === leftIdx) {
+            btn.className = "w-full text-left p-3.5 rounded-xl bg-indigo-900 border-2 border-cyan-400 text-white font-semibold transition-all text-xs flex items-center justify-between shadow-lg shadow-cyan-500/10";
+          } else {
+            const isMatched = userMatches[i] !== undefined;
+            btn.className = isMatched 
+              ? "w-full text-left p-3.5 rounded-xl bg-indigo-950/60 border border-cyan-500/40 text-indigo-200 transition-all text-xs font-medium flex items-center justify-between"
+              : "w-full text-left p-3.5 rounded-xl bg-indigo-950/80 border border-indigo-500/40 text-indigo-100 hover:border-cyan-400 transition-all text-xs font-medium flex items-center justify-between";
+          }
+        }
+      });
+    }
+
+    function selectRightMatch(rightIdx) {
+      if (isSubmitted || selectedLeftMatch === null) return;
+      userMatches[selectedLeftMatch] = rightIdx;
+      selectedLeftMatch = null;
+      updateMatchingUI();
+    }
+
+    function updateMatchingUI() {
+      const q = quizQuestions[currentQuestionIndex];
+      q.pairs.forEach((_, leftIdx) => {
+        const btnLeft = document.getElementById(`match-left-${leftIdx}`);
+        const badgeLeft = document.getElementById(`match-badge-left-${leftIdx}`);
+        const isMatched = userMatches[leftIdx] !== undefined;
+
+        if (btnLeft && badgeLeft) {
+          if (isMatched) {
+            btnLeft.className = "w-full text-left p-3.5 rounded-xl bg-indigo-900/80 border border-cyan-400 text-cyan-200 transition-all text-xs font-semibold flex items-center justify-between";
+            badgeLeft.classList.remove('hidden');
+          } else {
+            btnLeft.className = "w-full text-left p-3.5 rounded-xl bg-indigo-950/80 border border-indigo-500/40 text-indigo-100 hover:border-cyan-400 transition-all text-xs font-medium flex items-center justify-between";
+            badgeLeft.classList.add('hidden');
+          }
+        }
+      });
+
+      rightPairsShuffled.forEach((_, rightIdx) => {
+        const btnRight = document.getElementById(`match-right-${rightIdx}`);
+        const badgeRight = document.getElementById(`match-badge-right-${rightIdx}`);
+        const isMatchedByLeft = Object.values(userMatches).includes(rightIdx);
+
+        if (btnRight && badgeRight) {
+          if (isMatchedByLeft) {
+            btnRight.className = "w-full text-left p-3.5 rounded-xl bg-emerald-600 border border-emerald-400 text-white font-semibold transition-all text-xs flex items-center justify-between shadow-md shadow-emerald-900/30";
+            badgeRight.classList.remove('hidden');
+          } else {
+            btnRight.className = "w-full text-left p-3.5 rounded-xl bg-slate-900/80 border border-slate-700 text-slate-200 hover:border-emerald-500 transition-all text-xs font-medium flex items-center justify-between";
+            badgeRight.classList.add('hidden');
+          }
+        }
+      });
+    }
+
+    function selectCategoryItem(itemIdx) {
+      if (isSubmitted) return;
+      selectedCategoryItem = itemIdx;
+      const q = quizQuestions[currentQuestionIndex];
+      q.items.forEach((_, idx) => {
+        const el = document.getElementById(`cat-item-${idx}`);
+        if (el) {
+          if (idx === itemIdx) {
+            el.className = "cursor-pointer px-3 py-2 rounded-lg bg-indigo-600 border-2 border-cyan-400 text-xs text-white font-bold transition-all shadow-md";
+          } else if (!categoryAssignments[idx]) {
+            el.className = "cursor-pointer px-3 py-2 rounded-lg bg-indigo-900/60 border border-indigo-500/40 text-xs text-indigo-100 font-medium hover:border-indigo-400 transition-all shadow-sm";
+          }
+        }
+      });
+    }
+
+    function assignCategoryItem(catName) {
+      if (isSubmitted || selectedCategoryItem === null) return;
+      categoryAssignments[selectedCategoryItem] = catName;
+      selectedCategoryItem = null;
+      renderCategorizationZones();
+    }
+
+    function handleDragStart(e, idx) {
+      if (isSubmitted) return;
+      e.dataTransfer.setData('text/plain', idx);
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.currentTarget.classList.add('drop-zone-active');
+    }
+
+    function handleDragLeave(e) {
+      e.currentTarget.classList.remove('drop-zone-active');
+    }
+
+    function handleDrop(e, catName) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('drop-zone-active');
+      const idx = parseInt(e.dataTransfer.getData('text/plain'));
+      if (!isNaN(idx)) {
+        categoryAssignments[idx] = catName;
+        renderCategorizationZones();
+      }
+    }
+
+    function renderCategorizationZones() {
+      const q = quizQuestions[currentQuestionIndex];
+      q.categories.forEach(cat => {
+        const zone = document.getElementById(`cat-zone-${cat.replace(/\s+/g, '')}`);
+        if (!zone) return;
+
+        const assignedIndices = Object.keys(categoryAssignments).filter(k => categoryAssignments[k] === cat);
+        zone.innerHTML = assignedIndices.map(idx => `
+          <div onclick="unassignCategoryItem(${idx})" class="cursor-pointer px-3 py-2 rounded-lg bg-indigo-600 border border-indigo-400 text-white text-xs font-semibold flex items-center justify-between shadow-sm">
+            <span>${q.items[idx].text}</span>
+            <i class="fas fa-times text-[10px] opacity-70"></i>
+          </div>
+        `).join('');
+      });
+
+      q.items.forEach((_, idx) => {
+        const el = document.getElementById(`cat-item-${idx}`);
+        if (el) {
+          if (categoryAssignments[idx]) {
+            el.classList.add('hidden');
+          } else {
+            el.classList.remove('hidden');
+            el.className = "cursor-pointer px-3 py-2 rounded-lg bg-indigo-900/60 border border-indigo-500/40 text-xs text-indigo-100 font-medium hover:border-indigo-400 transition-all shadow-sm";
+          }
+        }
+      });
+    }
+
+    function unassignCategoryItem(idx) {
+      if (isSubmitted) return;
+      delete categoryAssignments[idx];
+      renderCategorizationZones();
+    }
+
+    function renderSequencingList() {
+      const container = document.getElementById('answerContainer');
+      if (!container) return;
+
+      container.innerHTML = `
+        <div class="space-y-3">
+          <span class="text-xs font-semibold text-slate-400">Reorder the dialogue into correct sequence (Drag or use arrows):</span>
+          <div id="sequencingList" class="space-y-2">
+            ${currentSequence.map((text, idx) => `
+              <div draggable="true" ondragstart="handleSeqDragStart(event, ${idx})" ondragover="handleSeqDragOver(event)" ondrop="handleSeqDrop(event, ${idx})" class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-700 flex items-center justify-between gap-3 text-xs text-slate-200 font-medium">
+                <div class="flex items-center gap-3">
+                  <i class="fas fa-grip-vertical text-slate-500 cursor-grab"></i>
+                  <span>${text}</span>
+                </div>
+                <div class="flex items-center gap-1">
+                  <button onclick="moveSeq(${idx}, -1)" class="w-6 h-6 rounded bg-slate-800 border border-slate-700 hover:bg-indigo-600 flex items-center justify-center text-slate-300 hover:text-white transition-all">
+                    <i class="fas fa-arrow-up text-[10px]"></i>
+                  </button>
+                  <button onclick="moveSeq(${idx}, 1)" class="w-6 h-6 rounded bg-slate-800 border border-slate-700 hover:bg-indigo-600 flex items-center justify-center text-slate-300 hover:text-white transition-all">
+                    <i class="fas fa-arrow-down text-[10px]"></i>
+                  </button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function moveSeq(idx, direction) {
+      if (isSubmitted) return;
+      const targetIdx = idx + direction;
+      if (targetIdx < 0 || targetIdx >= currentSequence.length) return;
+      const temp = currentSequence[idx];
+      currentSequence[idx] = currentSequence[targetIdx];
+      currentSequence[targetIdx] = temp;
+      renderSequencingList();
+    }
+
+    function handleSeqDragStart(e, idx) {
+      if (isSubmitted) return;
+      draggedItemIndex = idx;
+      e.dataTransfer.setData('text/plain', idx);
+    }
+
+    function handleSeqDragOver(e) {
+      e.preventDefault();
+    }
+
+    function handleSeqDrop(e, targetIdx) {
+      e.preventDefault();
+      if (isSubmitted || draggedItemIndex === null) return;
+      const item = currentSequence.splice(draggedItemIndex, 1)[0];
+      currentSequence.splice(targetIdx, 0, item);
+      draggedItemIndex = null;
+      renderSequencingList();
+    }
+
+    // --- Submission & Evaluation ---
+
+    function submitAnswer() {
+      if (isSubmitted) return;
+      const q = quizQuestions[currentQuestionIndex];
+      let isCorrect = false;
+      let userResponseText = "";
+
+      if (q.type === 'mcq') {
+        if (selectedMcqOption === null) return;
+        isCorrect = selectedMcqOption === q.correctAnswer;
+        userResponseText = q.options[selectedMcqOption] || "No selection";
+      } else if (q.type === 'cloze') {
+        const input = document.getElementById('clozeInput');
+        if (!input || !input.value.trim()) return;
+        userResponseText = input.value.trim();
+        isCorrect = userResponseText.toLowerCase() === q.correctAnswer.toLowerCase();
+      } else if (q.type === 'scramble') {
+        if (scrambleSelected.length === 0) return;
+        userResponseText = scrambleSelected.join(" ").trim();
+        isCorrect = userResponseText === q.correctAnswer.trim();
+      } else if (q.type === 'matching') {
+        if (Object.keys(userMatches).length < q.pairs.length) return;
+        isCorrect = q.pairs.every((pair, leftIdx) => {
+          const matchedRightIdx = userMatches[leftIdx];
+          return rightPairsShuffled[matchedRightIdx] && rightPairsShuffled[matchedRightIdx].originalIdx === leftIdx;
+        });
+        userResponseText = `${Object.keys(userMatches).length} pairs matched`;
+      } else if (q.type === 'categorization') {
+        if (Object.keys(categoryAssignments).length < q.items.length) return;
+        isCorrect = q.items.every((item, idx) => categoryAssignments[idx] === item.category);
+        userResponseText = `${Object.keys(categoryAssignments).length} items categorized`;
+      } else if (q.type === 'sequencing') {
+        userResponseText = currentSequence.join(" | ");
+        isCorrect = currentSequence.every((step, idx) => step === q.steps[idx]);
+      }
+
+      isSubmitted = true;
+
+      if (isCorrect) {
+        score += 10;
+        document.getElementById('scoreDisplay').textContent = score;
+      }
+
+      userAnswers.push({
+        questionNumber: currentQuestionIndex + 1,
+        questionText: q.question,
+        isCorrect: isCorrect,
+        userAnswer: userResponseText,
+        correctAnswer: q.correctAnswer || q.steps || "Matched / Categorized correctly",
+        rationale: q.rationale
+      });
+
+      const feedbackBox = document.getElementById('feedbackBox');
+      feedbackBox.classList.remove('hidden');
+      if (isCorrect) {
+        feedbackBox.className = "p-5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-200 space-y-1 animate-fade-in";
+        feedbackBox.innerHTML = `
+          <div class="flex items-center gap-2 font-bold text-emerald-400">
+            <i class="fas fa-circle-check text-lg"></i>
+            <span>Correct! (+10 pts)</span>
+          </div>
+          <p class="text-xs text-emerald-300/90 leading-relaxed">${q.rationale}</p>
+        `;
+      } else {
+        feedbackBox.className = "p-5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-200 space-y-1 animate-fade-in";
+        feedbackBox.innerHTML = `
+          <div class="flex items-center gap-2 font-bold text-rose-400">
+            <i class="fas fa-circle-xmark text-lg"></i>
+            <span>Incorrect</span>
+          </div>
+          <p class="text-xs text-rose-300/90 leading-relaxed">${q.rationale}</p>
+        `;
+      }
+
+      document.getElementById('submitBtn').classList.add('hidden');
+      document.getElementById('nextBtn').classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+      if (currentQuestionIndex < quizQuestions.length - 1) {
+        currentQuestionIndex++;
+        loadQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function finishQuiz() {
+      if (timerInterval) clearInterval(timerInterval);
+      document.getElementById('quizHeaderBadge').classList.add('hidden');
+
+      const percentage = Math.round((score / (quizQuestions.length * 10)) * 100);
+      let tier = "Introductory Explorer 📚";
+      if (percentage === 100) tier = "Personal Data Pro 🌟";
+      else if (percentage >= 80) tier = "Profile Star 🚀";
+      else if (percentage >= 60) tier = "Confident Communicator 👍";
+
+      const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
+      const secs = String(secondsElapsed % 60).padStart(2, '0');
+
+      const app = document.getElementById('appContainer');
+      app.innerHTML = `
+        <div class="space-y-8 animate-fade-in">
+          <div class="glass-card rounded-2xl p-6 md:p-8 text-center space-y-6 border border-slate-800 shadow-2xl">
+            <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-amber-500/20 border border-indigo-500/30 text-amber-400 shadow-inner">
+              <i class="fas fa-trophy text-4xl"></i>
+            </div>
+
+            <div class="space-y-1">
+              <h2 class="text-3xl font-extrabold text-white tracking-tight">Quiz Complete!</h2>
+              <p class="text-sm font-semibold text-indigo-300">${tier}</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+              <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800">
+                <span class="block text-xs font-semibold text-slate-400">Final Score</span>
+                <span class="text-2xl font-black text-emerald-400">${score} / 100</span>
+              </div>
+              <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800">
+                <span class="block text-xs font-semibold text-slate-400">Mastery</span>
+                <span class="text-2xl font-black text-indigo-400">${percentage}%</span>
+              </div>
+              <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800">
+                <span class="block text-xs font-semibold text-slate-400">Time Taken</span>
+                <span class="text-2xl font-black text-cyan-400 font-mono">${mins}:${secs}</span>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-center gap-4 pt-4 no-print">
+              <button id="retakeQuizBtn" onclick="startQuiz()" class="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm shadow-lg shadow-indigo-600/30 transition-all flex items-center gap-2">
+                <i class="fas fa-rotate-right"></i>
+                <span>Retake Quiz</span>
+              </button>
+              <button onclick="window.print()" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold text-sm transition-all flex items-center gap-2">
+                <i class="fas fa-print"></i>
+                <span>Print / Save PDF</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <h3 class="text-lg font-bold text-white tracking-wide print-text-dark">Question Breakdown</h3>
+            <div class="space-y-3">
+              ${userAnswers.map((item, idx) => `
+                <div class="glass-card rounded-xl p-5 border ${item.isCorrect ? 'border-emerald-500/30 bg-emerald-950/10' : 'border-rose-500/30 bg-rose-950/10'} space-y-2 print-border">
+                  <div class="flex items-start justify-between gap-3">
+                    <span class="text-xs font-bold text-slate-300 print-text-dark">Q${item.questionNumber}.${item.questionText.replace(/\n/g, ' ')}</span>
+                    <span class="text-xs font-bold px-2.5 py-1 rounded-full ${item.isCorrect ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-300'}">
+                      ${item.isCorrect ? 'Correct' : 'Incorrect'}
+                    </span>
+                  </div>
+                  <p class="text-xs text-slate-400 print-text-dark"><strong class="text-slate-300">Your Answer:</strong> ${item.userAnswer}</p>
+                  <p class="text-xs text-slate-400 print-text-dark"><strong class="text-slate-300">Explanation:</strong> ${item.rationale}</p>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // --- Keyboard Accessibility Listener ---
+    document.addEventListener('keydown', (e) => {
+      const q = quizQuestions[currentQuestionIndex];
+      
+      if (!isSubmitted && q && q.type === 'scramble' && document.getElementById('quizScreen')) {
+        if (e.key === 'Backspace') {
+          if (scrambleSelected.length > 0) {
+            const word = scrambleSelected.pop();
+            scrambleAvailable.push(word);
+            renderScrambleTiles();
+          }
+        } else if (e.key.length === 1 && /[a-zA-Z]/.test(e.key)) {
+          const char = e.key.toLowerCase();
+          const matchIdx = scrambleAvailable.findIndex(w => w.toLowerCase().startsWith(char));
+          if (matchIdx !== -1) {
+            const word = scrambleAvailable.splice(matchIdx, 1)[0];
+            scrambleSelected.push(word);
+            renderScrambleTiles();
+          }
+        }
+      }
+
+      if (e.key === 'Enter') {
+        const startBtn = document.getElementById('startQuizBtn');
+        if (startBtn && document.body.contains(startBtn) && !document.getElementById('quizScreen')) {
+          startQuiz();
+          return;
+        }
+
+        if (document.getElementById('quizScreen')) {
+          if (!isSubmitted) {
+            submitAnswer();
+          } else {
+            nextQuestion();
+          }
+        }
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', renderWelcomeScreen);
+  </script>
+</body>
+</html>

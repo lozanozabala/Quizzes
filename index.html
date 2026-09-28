@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mr. Lozano's Quizzes</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-slate-100 min-h-full flex flex-col items-center justify-center p-4">
+
+    <div class="w-full max-w-2xl mx-auto bg-slate-900/80 backdrop-blur-md border border-slate-700/50 rounded-2xl shadow-2xl p-8 md:p-12 transition-all duration-300">
+        
+        <!-- Header / Branding -->
+        <div class="flex items-center justify-between border-b border-slate-800 pb-6 mb-8">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-xl shadow-inner">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-white">Mr. Lozano</h1>
+                    <p class="text-xs text-indigo-300 font-medium tracking-wider uppercase">English Lessons</p>
+                </div>
+            </div>
+            <div class="text-right hidden sm:block">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                    <i class="fa-solid fa-book-open mr-1.5 text-indigo-400"></i> Quiz Portal
+                </span>
+            </div>
+        </div>
+
+        <!-- Main Title & Instructions -->
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-extrabold text-white tracking-tight mb-3">Mr. Lozano's Quizzes</h2>
+            <p class="text-slate-400 text-sm md:text-base">Please select a quiz from the list below to begin.</p>
+        </div>
+
+        <!-- Quiz List -->
+        <div class="space-y-4 mb-4">
+            <!-- Introductions Quiz -->
+            <a href="Introductions.html" class="group flex items-center justify-between p-5 rounded-xl bg-slate-800/60 border border-slate-700/50 hover:border-indigo-500/50 hover:bg-slate-800 transition-all duration-200 shadow-md hover:shadow-indigo-500/10">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 text-xl group-hover:scale-110 transition-transform duration-200">
+                        <i class="fa-solid fa-handshake"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-white group-hover:text-indigo-300 transition-colors">Introductions</h3>
+                        <p class="text-xs text-slate-400">Practice basic greetings, meeting people, and conversational opening phrases.</p>
+                    </div>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-slate-700/50 border border-slate-600/50 flex items-center justify-center text-slate-300 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-500 transition-all duration-200">
+                    <i class="fa-solid fa-arrow-right text-sm"></i>
+                </div>
+            </a>
+
+            <!-- Personal Information Quiz -->
+            <a href="PersonalInformation.html" class="group flex items-center justify-between p-5 rounded-xl bg-slate-800/60 border border-slate-700/50 hover:border-indigo-500/50 hover:bg-slate-800 transition-all duration-200 shadow-md hover:shadow-indigo-500/10">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 text-xl group-hover:scale-110 transition-transform duration-200">
+                        <i class="fa-solid fa-id-card"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-white group-hover:text-indigo-300 transition-colors">Personal information</h3>
+                        <p class="text-xs text-slate-400">Practice sharing personal details, origins, occupations, and background information.</p>
+                    </div>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-slate-700/50 border border-slate-600/50 flex items-center justify-center text-slate-300 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-500 transition-all duration-200">
+                    <i class="fa-solid fa-arrow-right text-sm"></i>
+                </div>
+            </a>
+
+            <!-- Flavors Quiz -->
+            <a href="Flavors.html" class="group flex items-center justify-between p-5 rounded-xl bg-slate-800/60 border border-slate-700/50 hover:border-indigo-500/50 hover:bg-slate-800 transition-all duration-200 shadow-md hover:shadow-indigo-500/10">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 text-xl group-hover:scale-110 transition-transform duration-200">
+                        <i class="fa-solid fa-utensils"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-white group-hover:text-indigo-300 transition-colors">Flavors Quiz</h3>
+                        <p class="text-xs text-slate-400">Practice vocabulary related to tastes and everyday food flavors.</p>
+                    </div>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-slate-700/50 border border-slate-600/50 flex items-center justify-center text-slate-300 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-500 transition-all duration-200">
+                    <i class="fa-solid fa-arrow-right text-sm"></i>
+                </div>
+            </a>
+        </div>
+
+        <!-- Future Items Placeholder -->
+        <div class="mt-8 text-center border-t border-slate-800/80 pt-6">
+            <p class="text-xs text-slate-500 italic">More interactive quizzes will be added here soon.</p>
+        </div>
+
+    </div>
+
+</body>
+</html>

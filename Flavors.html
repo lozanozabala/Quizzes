@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foods and Flavors Quiz</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @media print {
+            body { background: white !important; color: black !important; }
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            .glass-panel { background: white !important; border: 1px solid #ccc !important; box-shadow: none !important; color: black !important; }
+        }
+        .print-only { display: none; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 min-h-screen text-slate-100 font-sans flex flex-col justify-between selection:bg-indigo-500 selection:text-white p-4 md:p-8">
+    
+    <!-- Top Header -->
+    <header class="w-full max-w-4xl mx-auto flex items-center justify-between py-4 mb-6 border-b border-slate-800/80 no-print">
+        <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 text-xl shadow-lg shadow-indigo-900/20">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-lg text-slate-100 tracking-wide">Mr. Lozano</h1>
+                <p class="text-xs text-indigo-400 font-medium tracking-wider uppercase">English Lessons</p>
+            </div>
+        </div>
+        <div class="text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-800/80 border border-slate-700/60 text-slate-300">
+            <i class="fa-solid fa-utensils text-indigo-400 mr-1.5"></i> CEFR A1/A2
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="w-full max-w-4xl mx-auto flex-grow flex flex-col items-center justify-center">
+
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="w-full glass-panel backdrop-blur-md bg-slate-900/80 border border-slate-700/50 rounded-2xl p-8 shadow-2xl text-center space-y-6">
+            <div class="inline-flex p-4 rounded-full bg-indigo-600/20 text-indigo-400 text-4xl mb-2 border border-indigo-500/30">
+                <i class="fa-solid fa-bowl-food"></i>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">Foods and Flavors Quiz</h1>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-6 text-left">
+                <div class="bg-slate-800/60 border border-slate-700/40 rounded-xl p-4 flex items-start space-x-3">
+                    <div class="text-indigo-400 text-xl mt-1"><i class="fa-solid fa-list-check"></i></div>
+                    <div>
+                        <h3 class="font-semibold text-slate-200">Format</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">10 interactive questions across multiple engaging modes.</p>
+                    </div>
+                </div>
+                <div class="bg-slate-800/60 border border-slate-700/40 rounded-xl p-4 flex items-start space-x-3">
+                    <div class="text-indigo-400 text-xl mt-1"><i class="fa-solid fa-trophy"></i></div>
+                    <div>
+                        <h3 class="font-semibold text-slate-200">Scoring</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">+10 points awarded for every correct answer.</p>
+                    </div>
+                </div>
+                <div class="bg-slate-800/60 border border-slate-700/40 rounded-xl p-4 flex items-start space-x-3">
+                    <div class="text-indigo-400 text-xl mt-1"><i class="fa-solid fa-lightbulb"></i></div>
+                    <div>
+                        <h3 class="font-semibold text-slate-200">Feedback</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Instant rationales, detailed hints, and performance tracking.</p>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="startQuiz()" class="w-full md:w-auto px-8 py-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 text-lg cursor-pointer">
+                <i class="fa-solid fa-play mr-2"></i> Start Quiz Now
+            </button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="hidden w-full glass-panel backdrop-blur-md bg-slate-900/80 border border-slate-700/50 rounded-2xl p-6 md:p-8 shadow-2xl space-y-6">
+            
+            <!-- Top Quiz Bar -->
+            <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                <div class="flex items-center space-x-3">
+                    <span id="question-counter" class="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-indigo-600/20 text-indigo-400 border border-indigo-500/30">Question 1 of 10</span>
+                    <span id="question-type-badge" class="text-xs font-semibold px-3 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700">Multiple Choice</span>
+                </div>
+                <div class="flex items-center space-x-4 text-sm font-medium text-slate-300">
+                    <div class="flex items-center space-x-1.5"><i class="fa-solid fa-star text-amber-400"></i> <span id="live-score">0</span> pts</div>
+                    <div class="flex items-center space-x-1.5"><i class="fa-regular fa-clock text-indigo-400"></i> <span id="timer-display">00:00</span></div>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                <div id="progress-bar" class="bg-gradient-to-r from-indigo-500 to-violet-500 h-2 rounded-full transition-all duration-300" style="width: 10%;"></div>
+            </div>
+
+            <!-- Question Container -->
+            <div class="space-y-4">
+                <h2 id="question-text" class="text-xl md:text-2xl font-bold text-white leading-snug"></h2>
+                
+                <!-- Hint Toggle -->
+                <div>
+                    <button onclick="toggleHint()" class="inline-flex items-center text-xs font-medium text-amber-400 hover:text-amber-300 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-lg transition-colors cursor-pointer">
+                        <i class="fa-solid fa-lightbulb mr-1.5"></i> <span id="hint-btn-text">Show Hint</span>
+                    </button>
+                    <div id="hint-box" class="hidden mt-2 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-xs text-amber-200"></div>
+                </div>
+            </div>
+
+            <!-- Dynamic Answer Container -->
+            <div id="answer-container" class="space-y-3 py-2"></div>
+
+            <!-- Feedback Rationale Box -->
+            <div id="feedback-box" class="hidden p-4 rounded-xl border transition-all duration-300"></div>
+
+            <!-- Action Controls -->
+            <div class="flex justify-end pt-4 border-t border-slate-800">
+                <button id="submit-btn" onclick="submitAnswer()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition-all duration-200 cursor-pointer">
+                    Submit Answer <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+                <button id="next-btn" onclick="nextQuestion()" class="hidden px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/30 transition-all duration-200 cursor-pointer">
+                    Next Question <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="hidden w-full glass-panel backdrop-blur-md bg-slate-900/80 border border-slate-700/50 rounded-2xl p-6 md:p-8 shadow-2xl space-y-6">
+            <div class="text-center space-y-3">
+                <div class="inline-flex p-4 rounded-full bg-emerald-600/20 text-emerald-400 text-4xl border border-emerald-500/30">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+                <h2 class="text-3xl font-extrabold text-white">Quiz Completed!</h2>
+                <p id="performance-tier" class="text-lg font-semibold text-indigo-400"></p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center my-4">
+                <div class="bg-slate-800/60 border border-slate-700/40 rounded-xl p-4">
+                    <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Final Score</p>
+                    <p id="res-score" class="text-3xl font-extrabold text-white mt-1">0 / 100</p>
+                </div>
+                <div class="bg-slate-800/60 border border-slate-700/40 rounded-xl p-4">
+                    <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Mastery</p>
+                    <p id="res-percentage" class="text-3xl font-extrabold text-indigo-400 mt-1">0%</p>
+                </div>
+                <div class="bg-slate-800/60 border border-slate-700/40 rounded-xl p-4">
+                    <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Elapsed Time</p>
+                    <p id="res-time" class="text-3xl font-extrabold text-emerald-400 mt-1">00:00</p>
+                </div>
+            </div>
+
+            <!-- Detailed Breakdown Summary -->
+            <div class="space-y-4">
+                <h3 class="text-lg font-bold text-white border-b border-slate-800 pb-2">Question Breakdown Summary</h3>
+                <div id="breakdown-list" class="space-y-3 max-h-96 overflow-y-auto pr-2"></div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap gap-4 justify-center pt-4 border-t border-slate-800 no-print">
+                <button onclick="retakeQuiz()" class="px-6 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold rounded-xl transition-all cursor-pointer">
+                    <i class="fa-solid fa-rotate-right mr-2"></i> Retake Quiz
+                </button>
+                <button onclick="window.print()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition-all cursor-pointer">
+                    <i class="fa-solid fa-print mr-2"></i> Print / Save PDF
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        const questions = [
+            {
+                type: 'mcq',
+                badge: 'Multiple Choice',
+                question: 'What is the primary flavor of a fresh lemon?',
+                options: ['Sweet', 'Sour', 'Salty', 'Bitter'],
+                correct: 'Sour',
+                hint: 'Think of citrus fruits that make your mouth pucker!',
+                explanation: 'Lemons contain high amounts of citric acid, giving them a distinct sour taste.'
+            },
+            {
+                type: 'cloze',
+                badge: 'Fill-in-the-Blank',
+                question: 'Potato chips and salted popcorn usually taste _____.',
+                correct: 'salty',
+                hint: 'It is the flavor of ocean water or table seasoning.',
+                explanation: '"Salty" is the basic taste sensation associated with sodium chloride (salt).'
+            },
+            {
+                type: 'scramble',
+                badge: 'Word Scramble',
+                question: 'Unscramble the letters to name a hot, caffeinated morning drink made from roasted beans:',
+                word: 'COFFEE',
+                hint: 'People often drink this black or with milk in the morning.',
+                explanation: 'Coffee is a popular brewed drink prepared from roasted coffee beans.'
+            },
+            {
+                type: 'matching',
+                badge: 'Matching',
+                question: 'Match each food item to its correct texture or flavor.',
+                pairs: [
+                    { left: 'Honey', right: 'Sweet' },
+                    { left: 'Potato Chips', right: 'Crunchy' },
+                    { left: 'Bacon', right: 'Greasy' },
+                    { left: 'Coffee Beans', right: 'Bitter' }
+                ],
+                hint: 'Pair foods like honey (sweet) and chips (crunchy) with their defining traits.',
+                explanation: 'Honey contains natural sugars (sweet), chips make a sharp sound when bitten (crunchy), bacon has high fat content (greasy), and coffee beans have an unsweetened, sharp taste (bitter).'
+            },
+            {
+                type: 'categorization',
+                badge: 'Categorization',
+                question: 'Categorize the following items into "Flavors" and "Textures".',
+                categories: ['Flavors', 'Textures'],
+                items: [
+                    { name: 'Sweet', category: 'Flavors' },
+                    { name: 'Sour', category: 'Flavors' },
+                    { name: 'Crunchy', category: 'Textures' },
+                    { name: 'Soft', category: 'Textures' }
+                ],
+                hint: 'Flavors describe taste on the tongue, while textures describe how food feels in the mouth.',
+                explanation: 'Flavors include sweet and sour, while textures include crunchy and soft.'
+            },
+            {
+                type: 'sequencing',
+                badge: 'Sequencing',
+                question: 'Order the steps from preparing to drinking hot chocolate from first to last:',
+                steps: [
+                    'Heat the milk in a pot.',
+                    'Add chocolate powder and stir.',
+                    'Pour into a mug.',
+                    'Sip and enjoy!'
+                ],
+                hint: 'Think about the logical order: heat liquid, mix ingredients, pour, then drink.',
+                explanation: 'The correct order is heating the milk, mixing in the chocolate powder, pouring into a mug, and sipping.'
+            },
+            {
+                type: 'mcq',
+                badge: 'Multiple Choice',
+                question: 'Which of these is a popular lunch meal containing beef, cheese, lettuce, and tomato between two buns?',
+                options: ['Hamburger', 'Caesar Salad', 'Lentil Soup', 'Lemonade'],
+                correct: 'Hamburger',
+                hint: 'It is a classic sandwich served with a ground meat patty.',
+                explanation: 'A hamburger consists of a cooked patty of ground meat placed inside a sliced bun.'
+            },
+            {
+                type: 'cloze',
+                badge: 'Fill-in-the-Blank',
+                question: 'The organ in our body that we use for the sense of taste is the _____.',
+                correct: 'tongue',
+                hint: 'It is located inside your mouth and covered in taste buds.',
+                explanation: 'The tongue is the primary sensory organ used to taste foods and beverages.'
+            },
+            {
+                type: 'matching',
+                badge: 'Matching',
+                question: 'Match each of the Five Senses to its corresponding body part.',
+                pairs: [
+                    { left: 'Sight', right: 'Eye' },
+                    { left: 'Hearing', right: 'Ear' },
+                    { left: 'Smell', right: 'Nose' },
+                    { left: 'Taste', right: 'Tongue' },
+                    { left: 'Touch', right: 'Hand' }
+                ],
+                hint: 'Connect senses like sight to eyes and hearing to ears.',
+                explanation: 'Each traditional human sense corresponds directly to a specific sensory organ (Eye, Ear, Nose, Tongue, Hand).'
+            },
+            {
+                type: 'categorization',
+                badge: 'Categorization',
+                question: 'Categorize the items into "Foods" and "Drinks".',
+                categories: ['Foods', 'Drinks'],
+                items: [
+                    { name: 'Cheeseburger', category: 'Foods' },
+                    { name: 'French Fries', category: 'Foods' },
+                    { name: 'Orange Juice', category: 'Drinks' },
+                    { name: 'Lemonade', category: 'Drinks' }
+                ],
+                hint: 'Solid meals are foods, while refreshing liquids are drinks.',
+                explanation: 'Cheeseburgers and French fries are solid foods, while orange juice and lemonade are liquid drinks.'
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timerSeconds = 0;
+        let timerInterval = null;
+        let userAnswers = [];
+        let isSubmitted = false;
+
+        // Scramble state
+        let scrambleAvailable = [];
+        let scrambleSelected = [];
+
+        // Matching state
+        let matchingPairs = [];
+        let selectedLeft = null;
+
+        // Categorization state
+        let userCategoryAssignments = {};
+
+        // Sequencing state
+        let currentSequence = [];
+
+        function startQuiz() {
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            currentQuestionIndex = 0;
+            score = 0;
+            timerSeconds = 0;
+            userAnswers = [];
+            isSubmitted = false;
+
+            document.getElementById('live-score').innerText = score;
+            startTimer();
+            loadQuestion();
+        }
+
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timerSeconds++;
+                let mins = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+                let secs = (timerSeconds % 60).toString().padStart(2, '0');
+                document.getElementById('timer-display').innerText = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function loadQuestion() {
+            isSubmitted = false;
+            const q = questions[currentQuestionIndex];
+            document.getElementById('question-counter').innerText = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+            document.getElementById('question-type-badge').innerText = q.badge;
+            document.getElementById('question-text').innerText = q.question;
+
+            const progress = ((currentQuestionIndex) / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${Math.max(progress, 10)}%`;
+
+            const hintBox = document.getElementById('hint-box');
+            hintBox.classList.add('hidden');
+            hintBox.innerText = q.hint;
+            document.getElementById('hint-btn-text').innerText = 'Show Hint';
+
+            const feedbackBox = document.getElementById('feedback-box');
+            feedbackBox.classList.add('hidden');
+            feedbackBox.innerHTML = '';
+
+            document.getElementById('submit-btn').classList.remove('hidden');
+            document.getElementById('next-btn').classList.add('hidden');
+
+            renderAnswerContainer(q);
+        }
+
+        function toggleHint() {
+            const hintBox = document.getElementById('hint-box');
+            const hintBtnText = document.getElementById('hint-btn-text');
+            if (hintBox.classList.contains('hidden')) {
+                hintBox.classList.remove('hidden');
+                hintBtnText.innerText = 'Hide Hint';
+            } else {
+                hintBox.classList.add('hidden');
+                hintBtnText.innerText = 'Show Hint';
+            }
+        }
+
+        function renderAnswerContainer(q) {
+            const container = document.getElementById('answer-container');
+            container.innerHTML = '';
+
+            if (q.type === 'mcq') {
+                q.options.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'w-full text-left p-4 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 text-slate-200 font-medium transition-all flex items-center justify-between cursor-pointer option-btn';
+                    btn.innerHTML = `<span><span class="inline-block w-6 h-6 rounded-full bg-slate-700 text-center text-xs leading-6 mr-3 text-slate-300 font-bold">${String.fromCharCode(65 + idx)}</span> ${opt}</span>`;
+                    btn.onclick = () => selectMcqOption(btn, opt);
+                    container.appendChild(btn);
+                });
+            } else if (q.type === 'cloze') {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'flex flex-col space-y-2';
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.id = 'cloze-input';
+                input.placeholder = '...';
+                input.className = 'w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors text-lg';
+                wrapper.appendChild(input);
+                container.appendChild(wrapper);
+            } else if (q.type === 'scramble') {
+                let letters = q.word.split('');
+                scrambleAvailable = shuffleArray([...letters].map(c => ({ char: c })));
+                scrambleSelected = [];
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'space-y-4';
+                
+                const builder = document.createElement('div');
+                builder.id = 'scramble-builder';
+                builder.className = 'min-h-[60px] p-4 bg-slate-800/80 border-2 border-dashed border-indigo-500/50 rounded-xl flex flex-wrap gap-2 items-center justify-center';
+                wrapper.appendChild(builder);
+
+                const available = document.createElement('div');
+                available.id = 'scramble-available';
+                available.className = 'flex flex-wrap gap-2 justify-center pt-2';
+                wrapper.appendChild(available);
+
+                const resetBtn = document.createElement('button');
+                resetBtn.type = 'button';
+                resetBtn.className = 'text-xs px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition-all cursor-pointer';
+                resetBtn.innerHTML = '<i class="fa-solid fa-rotate-right mr-1"></i> Reset Letters';
+                resetBtn.onclick = resetScramble;
+                wrapper.appendChild(resetBtn);
+
+                container.appendChild(wrapper);
+                updateScrambleUI();
+
+                document.onkeydown = handleScrambleKeydown;
+            } else if (q.type === 'matching') {
+                matchingPairs = [];
+                selectedLeft = null;
+
+                const grid = document.createElement('div');
+                grid.className = 'grid grid-cols-1 md:grid-cols-2 gap-6';
+
+                let leftCol = document.createElement('div');
+                leftCol.className = 'space-y-2';
+                leftCol.innerHTML = '<p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Items</p>';
+                
+                shuffleArray([...q.pairs]).forEach(p => {
+                    let btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'w-full text-left p-3 rounded-xl bg-slate-800/70 hover:bg-slate-800 border border-slate-700 text-slate-200 font-medium transition-all flex items-center justify-between cursor-pointer match-left';
+                    btn.dataset.value = p.left;
+                    btn.innerHTML = `<span>${p.left}</span><i class="fa-solid fa-circle text-[8px] text-slate-500"></i>`;
+                    btn.onclick = () => selectMatchLeft(p.left, btn);
+                    leftCol.appendChild(btn);
+                });
+
+                let rightCol = document.createElement('div');
+                rightCol.className = 'space-y-2';
+                rightCol.innerHTML = '<p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Matches</p>';
+                
+                shuffleArray([...q.pairs]).forEach(p => {
+                    let btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'w-full text-left p-3 rounded-xl bg-slate-800/70 hover:bg-slate-800 border border-slate-700 text-slate-200 font-medium transition-all flex items-center justify-between cursor-pointer match-right';
+                    btn.dataset.value = p.right;
+                    btn.innerHTML = `<span>${p.right}</span><i class="fa-solid fa-circle text-[8px] text-slate-500"></i>`;
+                    btn.onclick = () => selectMatchRight(p.right, btn);
+                    rightCol.appendChild(btn);
+                });
+
+                grid.appendChild(leftCol);
+                grid.appendChild(rightCol);
+                container.appendChild(grid);
+            } else if (q.type === 'categorization') {
+                userCategoryAssignments = {};
+                const wrapper = document.createElement('div');
+                wrapper.className = 'space-y-6';
+
+                const poolLabel = document.createElement('p');
+                poolLabel.className = 'text-xs font-semibold text-slate-400 uppercase tracking-wider';
+                poolLabel.innerText = 'Drag or click items into categories:';
+                wrapper.appendChild(poolLabel);
+
+                const itemsPool = document.createElement('div');
+                itemsPool.id = 'items-pool';
+                itemsPool.className = 'flex flex-wrap gap-3 p-4 bg-slate-800/40 border border-slate-700/60 rounded-xl min-h-[70px]';
+                
+                shuffleArray([...q.items]).forEach(item => {
+                    const card = document.createElement('div');
+                    card.draggable = true;
+                    card.className = 'px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-200 font-medium text-sm cursor-grab active:cursor-grabbing transition-all shadow select-none flex items-center space-x-2';
+                    card.innerHTML = `<i class="fa-solid fa-grip-vertical text-slate-500 text-xs"></i><span>${item.name}</span>`;
+                    
+                    card.ondragstart = (e) => {
+                        e.dataTransfer.setData('text/plain', item.name);
+                    };
+
+                    card.onclick = () => {
+                        let currentCat = userCategoryAssignments[item.name];
+                        let nextCatIndex = currentCat ? (q.categories.indexOf(currentCat) + 1) % q.categories.length : 0;
+                        if (nextCatIndex === 0 && currentCat) {
+                            delete userCategoryAssignments[item.name];
+                        } else {
+                            userCategoryAssignments[item.name] = q.categories[nextCatIndex];
+                        }
+                        renderCategorizationState(q);
+                    };
+
+                    itemsPool.appendChild(card);
+                });
+                wrapper.appendChild(itemsPool);
+
+                const zonesGrid = document.createElement('div');
+                zonesGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+
+                q.categories.forEach(cat => {
+                    const zone = document.createElement('div');
+                    zone.className = 'p-4 rounded-xl bg-slate-800/60 border-2 border-dashed border-slate-700 min-h-[140px] flex flex-col space-y-2 transition-all';
+                    zone.dataset.category = cat;
+                    zone.innerHTML = `<div class="flex items-center justify-between"><h4 class="font-bold text-indigo-400 text-sm">${cat}</h4><span class="text-xs text-slate-500">Drop here</span></div><div class="category-items flex flex-wrap gap-2 flex-grow items-start pt-1"></div>`;
+
+                    zone.ondragover = (e) => {
+                        e.preventDefault();
+                        zone.classList.add('border-indigo-500', 'bg-indigo-950/20');
+                    };
+                    zone.ondragleave = () => {
+                        zone.classList.remove('border-indigo-500', 'bg-indigo-950/20');
+                    };
+                    zone.ondrop = (e) => {
+                        e.preventDefault();
+                        zone.classList.remove('border-indigo-500', 'bg-indigo-950/20');
+                        const itemName = e.dataTransfer.getData('text/plain');
+                        if (itemName) {
+                            userCategoryAssignments[itemName] = cat;
+                            renderCategorizationState(q);
+                        }
+                    };
+
+                    zonesGrid.appendChild(zone);
+                });
+                wrapper.appendChild(zonesGrid);
+                container.appendChild(wrapper);
+            } else if (q.type === 'sequencing') {
+                currentSequence = shuffleArray([...q.steps]);
+                renderSequenceList(q);
+            }
+        }
+
+        function selectMcqOption(selectedBtn, opt) {
+            if (isSubmitted) return;
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                btn.classList.remove('border-indigo-500', 'bg-indigo-950/40');
+            });
+            selectedBtn.classList.add('border-indigo-500', 'bg-indigo-950/40');
+            selectedBtn.dataset.selected = opt;
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function updateScrambleUI() {
+            const builder = document.getElementById('scramble-builder');
+            const available = document.getElementById('scramble-available');
+            
+            builder.innerHTML = '';
+            if (scrambleSelected.length === 0) {
+                builder.innerHTML = '<span class="text-xs text-slate-500">Click or type letters below</span>';
+            } else {
+                scrambleSelected.forEach((item, idx) => {
+                    const tile = document.createElement('button');
+                    tile.type = 'button';
+                    tile.className = 'w-10 h-10 rounded-lg bg-indigo-600 text-white font-bold text-lg shadow flex items-center justify-center cursor-pointer transition-transform hover:scale-105';
+                    tile.innerText = item.char;
+                    tile.onclick = () => removeScrambleTile(idx);
+                    builder.appendChild(tile);
+                });
+            }
+
+            available.innerHTML = '';
+            scrambleAvailable.forEach((item, idx) => {
+                const tile = document.createElement('button');
+                tile.type = 'button';
+                tile.className = 'w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold text-lg shadow flex items-center justify-center cursor-pointer transition-transform hover:scale-105';
+                tile.innerText = item.char;
+                tile.onclick = () => addScrambleTile(idx);
+                available.appendChild(tile);
+            });
+        }
+
+        function addScrambleTile(availIdx) {
+            if (isSubmitted) return;
+            let item = scrambleAvailable.splice(availIdx, 1)[0];
+            scrambleSelected.push(item);
+            updateScrambleUI();
+        }
+
+        function removeScrambleTile(selectedIdx) {
+            if (isSubmitted) return;
+            let item = scrambleSelected.splice(selectedIdx, 1)[0];
+            scrambleAvailable.push(item);
+            updateScrambleUI();
+        }
+
+        function resetScramble() {
+            if (isSubmitted) return;
+            const q = questions[currentQuestionIndex];
+            let letters = q.word.split('');
+            scrambleAvailable = shuffleArray(letters.map(c => ({ char: c })));
+            scrambleSelected = [];
+            updateScrambleUI();
+        }
+
+        function handleScrambleKeydown(e) {
+            const q = questions[currentQuestionIndex];
+            if (!q || q.type !== 'scramble' || isSubmitted) return;
+
+            if (e.key === 'Backspace' && scrambleSelected.length > 0) {
+                let item = scrambleSelected.pop();
+                scrambleAvailable.push(item);
+                updateScrambleUI();
+            } else if (/^[a-zA-Z]$/.test(e.key)) {
+                let charUpper = e.key.toUpperCase();
+                let foundIdx = scrambleAvailable.findIndex(item => item.char === charUpper);
+                if (foundIdx !== -1) {
+                    let item = scrambleAvailable.splice(foundIdx, 1)[0];
+                    scrambleSelected.push(item);
+                    updateScrambleUI();
+                }
+            }
+        }
+
+        function selectMatchLeft(val, btn) {
+            if (isSubmitted) return;
+            document.querySelectorAll('.match-left').forEach(b => b.classList.remove('border-indigo-500', 'bg-indigo-950/40'));
+            btn.classList.add('border-indigo-500', 'bg-indigo-950/40');
+            selectedLeft = val;
+        }
+
+        function selectMatchRight(val, btn) {
+            if (isSubmitted || !selectedLeft) return;
+            matchingPairs = matchingPairs.filter(p => p.left !== selectedLeft && p.right !== val);
+            matchingPairs.push({ left: selectedLeft, right: val });
+            
+            btn.classList.add('border-emerald-500', 'bg-emerald-950/40');
+            btn.innerHTML = `<span>${val}</span> <span class="text-xs text-emerald-400 font-bold"><i class="fa-solid fa-check"></i> Linked to ${selectedLeft}</span>`;
+            selectedLeft = null;
+            document.querySelectorAll('.match-left').forEach(b => b.classList.remove('border-indigo-500', 'bg-indigo-950/40'));
+        }
+
+        function renderCategorizationState(q) {
+            const pool = document.getElementById('items-pool');
+            pool.innerHTML = '';
+
+            let unassigned = q.items.filter(item => !userCategoryAssignments[item.name]);
+            if (unassigned.length === 0) {
+                pool.innerHTML = '<span class="text-xs text-slate-500 italic">All items categorized! Click items to change.</span>';
+            } else {
+                unassigned.forEach(item => {
+                    const card = document.createElement('div');
+                    card.draggable = true;
+                    card.className = 'px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-750 border border-slate-700 text-slate-200 font-medium text-sm cursor-grab active:cursor-grabbing transition-all shadow select-none flex items-center space-x-2';
+                    card.innerHTML = `<i class="fa-solid fa-grip-vertical text-slate-500 text-xs"></i><span>${item.name}</span>`;
+                    
+                    card.ondragstart = (e) => {
+                        e.dataTransfer.setData('text/plain', item.name);
+                    };
+                    card.onclick = () => {
+                        let currentCat = userCategoryAssignments[item.name];
+                        let nextCatIndex = currentCat ? (q.categories.indexOf(currentCat) + 1) % q.categories.length : 0;
+                        userCategoryAssignments[item.name] = q.categories[nextCatIndex];
+                        renderCategorizationState(q);
+                    };
+                    pool.appendChild(card);
+                });
+            }
+
+            document.querySelectorAll('[data-category]').forEach(zone => {
+                const cat = zone.dataset.category;
+                const itemsContainer = zone.querySelector('.category-items');
+                itemsContainer.innerHTML = '';
+
+                q.items.filter(item => userCategoryAssignments[item.name] === cat).forEach(item => {
+                    const badge = document.createElement('div');
+                    badge.className = 'px-3 py-1.5 rounded-lg bg-indigo-600/30 border border-indigo-500 text-indigo-200 text-xs font-medium flex items-center space-x-2 cursor-pointer';
+                    badge.innerHTML = `<span>${item.name}</span> <i class="fa-solid fa-xmark text-indigo-400"></i>`;
+                    badge.onclick = () => {
+                        delete userCategoryAssignments[item.name];
+                        renderCategorizationState(q);
+                    };
+                    itemsContainer.appendChild(badge);
+                });
+            });
+        }
+
+        function renderSequenceList(q) {
+            const container = document.getElementById('answer-container');
+            container.innerHTML = '';
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'space-y-2';
+
+            currentSequence.forEach((step, idx) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.draggable = true;
+                itemDiv.className = 'p-3.5 rounded-xl bg-slate-800/85 hover:bg-slate-800 border border-slate-700 text-slate-200 font-medium text-sm flex items-center justify-between cursor-grab active:cursor-grabbing transition-all';
+                itemDiv.innerHTML = `<div class="flex items-center space-x-3"><span class="w-6 h-6 rounded-full bg-indigo-600/30 text-indigo-400 font-bold text-xs flex items-center justify-center border border-indigo-500/40">${idx + 1}</span><i class="fa-solid fa-grip-vertical text-slate-500 text-xs"></i><span>${step}</span></div><div class="flex items-center space-x-1"><button type="button" onclick="moveSequence(${idx}, -1)" class="w-7 h-7 rounded bg-slate-700 hover:bg-slate-600 text-slate-300 text-xs flex items-center justify-center cursor-pointer"><i class="fa-solid fa-arrow-up"></i></button><button type="button" onclick="moveSequence(${idx}, 1)" class="w-7 h-7 rounded bg-slate-700 hover:bg-slate-600 text-slate-300 text-xs flex items-center justify-center cursor-pointer"><i class="fa-solid fa-arrow-down"></i></button></div>`;
+                
+                itemDiv.ondragstart = (e) => {
+                    e.dataTransfer.setData('text/plain', idx);
+                };
+                itemDiv.ondragover = (e) => e.preventDefault();
+                itemDiv.ondrop = (e) => {
+                    e.preventDefault();
+                    let fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
+                    let toIdx = idx;
+                    if (fromIdx !== toIdx) {
+                        let moved = currentSequence.splice(fromIdx, 1)[0];
+                        currentSequence.splice(toIdx, 0, moved);
+                        renderSequenceList(q);
+                    }
+                };
+
+                wrapper.appendChild(itemDiv);
+            });
+
+            container.appendChild(wrapper);
+        }
+
+        function moveSequence(idx, direction) {
+            if (isSubmitted) return;
+            let newIdx = idx + direction;
+            if (newIdx >= 0 && newIdx < currentSequence.length) {
+                let temp = currentSequence[idx];
+                currentSequence[idx] = currentSequence[newIdx];
+                currentSequence[newIdx] = temp;
+                renderSequenceList(questions[currentQuestionIndex]);
+            }
+        }
+
+        function submitAnswer() {
+            if (isSubmitted) return;
+            const q = questions[currentQuestionIndex];
+            let isCorrect = false;
+            let userAnswerStr = '';
+
+            if (q.type === 'mcq') {
+                const selected = document.querySelector('.option-btn.border-indigo-500');
+                if (!selected) {
+                    alert('Please select an option before submitting.');
+                    return;
+                }
+                userAnswerStr = selected.dataset.selected || selected.innerText.trim().substring(2).trim();
+                isCorrect = (userAnswerStr.toLowerCase() === q.correct.toLowerCase());
+            } else if (q.type === 'cloze') {
+                const input = document.getElementById('cloze-input');
+                userAnswerStr = input.value.trim();
+                if (!userAnswerStr) {
+                    alert('Please type an answer before submitting.');
+                    return;
+                }
+                isCorrect = (userAnswerStr.toLowerCase() === q.correct.toLowerCase());
+            } else if (q.type === 'scramble') {
+                userAnswerStr = scrambleSelected.map(i => i.char).join('');
+                if (userAnswerStr.length < q.word.length) {
+                    alert('Please place all letter tiles into the builder before submitting.');
+                    return;
+                }
+                isCorrect = (userAnswerStr.toUpperCase() === q.word.toUpperCase());
+            } else if (q.type === 'matching') {
+                if (matchingPairs.length < q.pairs.length) {
+                    alert('Please match all items before submitting.');
+                    return;
+                }
+                userAnswerStr = matchingPairs.map(p => `${p.left} -> ${p.right}`).join(', ');
+                isCorrect = q.pairs.every(pair => {
+                    let found = matchingPairs.find(p => p.left === pair.left && p.right === pair.right);
+                    return !!found;
+                });
+            } else if (q.type === 'categorization') {
+                if (Object.keys(userCategoryAssignments).length < q.items.length) {
+                    alert('Please categorize all items before submitting.');
+                    return;
+                }
+                userAnswerStr = Object.entries(userCategoryAssignments).map(([k, v]) => `${k}:${v}`).join(', ');
+                isCorrect = q.items.every(item => userCategoryAssignments[item.name] === item.category);
+            } else if (q.type === 'sequencing') {
+                userAnswerStr = currentSequence.join(' -> ');
+                isCorrect = q.steps.every((step, idx) => currentSequence[idx] === step);
+            }
+
+            isSubmitted = true;
+            document.onkeydown = null;
+
+            if (isCorrect) {
+                score += 10;
+                document.getElementById('live-score').innerText = score;
+            }
+
+            userAnswers.push({
+                question: q.question,
+                userAnswer: userAnswerStr,
+                correctAnswer: q.type === 'mcq' || q.type === 'cloze' ? q.correct : (q.type === 'scramble' ? q.word : (q.type === 'matching' ? q.pairs.map(p => `${p.left}:${p.right}`).join(', ') : (q.type === 'categorization' ? q.items.map(i => `${i.name}:${i.category}`).join(', ') : q.steps.join(' -> ')))),
+                isCorrect: isCorrect,
+                explanation: q.explanation
+            });
+
+            const feedbackBox = document.getElementById('feedback-box');
+            feedbackBox.classList.remove('hidden');
+            if (isCorrect) {
+                feedbackBox.className = 'p-4 rounded-xl border bg-emerald-950/40 border-emerald-500/50 text-emerald-200';
+                feedbackBox.innerHTML = `<div class="flex items-center space-x-2 font-bold text-emerald-400 mb-1"><i class="fa-solid fa-circle-check"></i><span>Correct! (+10 pts)</span></div><p class="text-xs text-slate-300 leading-relaxed">${q.explanation}</p>`;
+            } else {
+                feedbackBox.className = 'p-4 rounded-xl border bg-rose-950/40 border-rose-500/50 text-rose-200';
+                feedbackBox.innerHTML = `<div class="flex items-center space-x-2 font-bold text-rose-400 mb-1"><i class="fa-solid fa-circle-xmark"></i><span>Incorrect</span></div><p class="text-xs text-slate-300 leading-relaxed">${q.explanation}</p>`;
+            }
+
+            document.getElementById('submit-btn').classList.add('hidden');
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.classList.remove('hidden');
+
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtn.innerHTML = 'Finish Quiz <i class="fa-solid fa-flag-checkered ml-2"></i>';
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            if (timerInterval) clearInterval(timerInterval);
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('results-screen').classList.remove('hidden');
+
+            document.getElementById('res-score').innerText = `${score} / 100`;
+            document.getElementById('res-percentage').innerText = `${score}%`;
+
+            let mins = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+            let secs = (timerSeconds % 60).toString().padStart(2, '0');
+            document.getElementById('res-time').innerText = `${mins}:${secs}`;
+
+            let tierTitle = '';
+            if (score >= 90) tierTitle = 'Advanced Flavor Expert 🌟';
+            else if (score >= 70) tierTitle = 'Food & Flavor Master 👨‍🍳';
+            else if (score >= 50) tierTitle = 'Flavor Explorer 🧭';
+            else tierTitle = 'Beginner Taster 🌱';
+            document.getElementById('performance-tier').innerText = tierTitle;
+
+            const breakdownList = document.getElementById('breakdown-list');
+            breakdownList.innerHTML = '';
+            userAnswers.forEach((ans, idx) => {
+                const item = document.createElement('div');
+                item.className = `p-4 rounded-xl border ${ans.isCorrect ? 'bg-emerald-950/20 border-emerald-500/30' : 'bg-rose-950/20 border-rose-500/30'} space-y-1`;
+                item.innerHTML = `<div class="flex items-center justify-between"><span class="text-xs font-bold uppercase tracking-wider text-slate-400">Question ${idx + 1}</span><span class="text-xs font-bold px-2 py-0.5 rounded ${ans.isCorrect ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}">${ans.isCorrect ? 'Correct' : 'Incorrect'}</span></div><p class="font-semibold text-sm text-slate-200">${ans.question}</p><p class="text-xs text-slate-400">Your Answer: <span class="text-slate-200 font-medium">${ans.userAnswer}</span></p>${!ans.isCorrect ? `<p class="text-xs text-rose-300">Correct Answer: <span class="font-medium">${ans.correctAnswer}</span></p>` : ''}<p class="text-xs text-slate-400 italic mt-1">${ans.explanation}</p>`;
+                breakdownList.appendChild(item);
+            });
+        }
+
+        function retakeQuiz() {
+            document.getElementById('results-screen').classList.add('hidden');
+            document.getElementById('welcome-screen').classList.remove('hidden');
+        }
+
+        // Global Keybindings for Enter Key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const welcomeScreen = document.getElementById('welcome-screen');
+                const quizScreen = document.getElementById('quiz-screen');
+                const resultsScreen = document.getElementById('results-screen');
+
+                if (!welcomeScreen.classList.contains('hidden')) {
+                    startQuiz();
+                } else if (!quizScreen.classList.contains('hidden')) {
+                    const submitBtn = document.getElementById('submit-btn');
+                    const nextBtn = document.getElementById('next-btn');
+                    if (!submitBtn.classList.contains('hidden')) {
+                        submitAnswer();
+                    } else if (!nextBtn.classList.contains('hidden')) {
+                        nextQuestion();
+                    }
+                } else if (!resultsScreen.classList.contains('hidden')) {
+                    retakeQuiz();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
