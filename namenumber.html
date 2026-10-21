@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Information Quiz</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        @media print {
+            body { background: white !important; color: black !important; }
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            .glass-panel { background: white !important; border: 1px solid #cbd5e1 !important; color: black !important; box-shadow: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 flex flex-col items-center justify-between p-4 sm:p-6 select-none">
+
+    <!-- Top Header / Branding -->
+    <header class="w-full max-w-3xl flex items-center justify-between py-3 px-4 glass-panel rounded-2xl mb-6 shadow-xl no-print">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-indigo-400 text-xl shadow-inner">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-base sm:text-lg tracking-wide text-white">Mr. Lozano</h1>
+                <p class="text-xs text-indigo-300 font-medium">English Lessons</p>
+            </div>
+        </div>
+        <div id="top-stats" class="hidden items-center space-x-4 text-xs sm:text-sm font-medium text-slate-300">
+            <span id="timer-display" class="flex items-center bg-slate-900/60 px-3 py-1.5 rounded-lg border border-slate-800">
+                <i class="fas fa-clock text-indigo-400 mr-2"></i> 00:00
+            </span>
+            <span id="score-display" class="flex items-center bg-slate-900/60 px-3 py-1.5 rounded-lg border border-slate-800">
+                <i class="fas fa-star text-amber-400 mr-2"></i> <span id="current-score">0</span> pts
+            </span>
+        </div>
+    </header>
+
+    <!-- Main Container Wrapper -->
+    <main class="w-full max-w-3xl flex-1 flex flex-col justify-center my-auto">
+
+        <!-- WELCOME SCREEN -->
+        <div id="welcome-screen" class="glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl text-center space-y-8 animate-fadeIn">
+            <div class="space-y-3">
+                <div class="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 text-3xl mb-2 shadow-inner">
+                    <i class="fas fa-pen-nib"></i>
+                </div>
+                <h2 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">Personal Information Quiz</h2>
+            </div>
+
+            <!-- Feature / Format Summary Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left">
+                <div class="bg-slate-900/60 border border-slate-800/80 p-4 rounded-2xl flex items-start space-x-3">
+                    <div class="text-indigo-400 text-lg mt-0.5"><i class="fas fa-list-ol"></i></div>
+                    <div>
+                        <h3 class="text-sm font-semibold text-slate-200">Format</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">5 simple A1 fill-in-the-blank questions.</p>
+                    </div>
+                </div>
+                <div class="bg-slate-900/60 border border-slate-800/80 p-4 rounded-2xl flex items-start space-x-3">
+                    <div class="text-amber-400 text-lg mt-0.5"><i class="fas fa-award"></i></div>
+                    <div>
+                        <h3 class="text-sm font-semibold text-slate-200">Scoring</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">+10 points per correct answer with instant feedback.</p>
+                    </div>
+                </div>
+                <div class="bg-slate-900/60 border border-slate-800/80 p-4 rounded-2xl flex items-start space-x-3">
+                    <div class="text-emerald-400 text-lg mt-0.5"><i class="fas fa-lightbulb"></i></div>
+                    <div>
+                        <h3 class="text-sm font-semibold text-slate-200">Feedback</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Simple hints and clear A1 rationales.</p>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="startQuiz()" class="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-base rounded-2xl shadow-lg shadow-indigo-600/30 transition-all transform hover:-translate-y-0.5 cursor-pointer">
+                Start Quiz Now <i class="fas fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+
+        <!-- QUIZ SCREEN -->
+        <div id="quiz-screen" class="hidden glass-panel rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+            <!-- Top Progress & Badge -->
+            <div class="space-y-3">
+                <div class="flex items-center justify-between text-xs sm:text-sm font-medium text-slate-400">
+                    <span id="question-counter" class="text-indigo-300 font-semibold">Question 1 of 5</span>
+                    <span id="question-type-badge" class="px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs">Fill-in-the-Blank</span>
+                </div>
+                <!-- Progress Bar -->
+                <div class="w-full bg-slate-900 h-2.5 rounded-full overflow-hidden border border-slate-800">
+                    <div id="progress-bar" class="bg-gradient-to-r from-indigo-500 to-violet-500 h-full w-0 transition-all duration-300"></div>
+                </div>
+            </div>
+
+            <!-- Question Container -->
+            <div class="space-y-4">
+                <h3 id="question-text" class="text-lg sm:text-xl font-bold text-white leading-snug">Question text goes here?</h3>
+
+                <!-- Hint Section -->
+                <div id="hint-container" class="hidden">
+                    <button onclick="toggleHint()" class="text-xs text-amber-400 hover:text-amber-300 flex items-center space-x-1.5 transition-colors cursor-pointer">
+                        <i class="fas fa-lightbulb"></i> <span id="hint-toggle-text">Show Hint</span>
+                    </button>
+                    <div id="hint-box" class="hidden mt-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-200">
+                        <span id="hint-text">Hint description here.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Answer Container -->
+            <div id="answer-container" class="space-y-3 pt-2">
+                <!-- Cloze Input injected via JS -->
+            </div>
+
+            <!-- Instant Feedback / Rationale Box -->
+            <div id="feedback-box" class="hidden p-4 rounded-2xl border text-sm space-y-2 animate-fadeIn">
+                <div id="feedback-header" class="font-bold flex items-center space-x-2">
+                    <i id="feedback-icon" class="fas"></i>
+                    <span id="feedback-title">Correct!</span>
+                </div>
+                <p id="feedback-rationale" class="text-xs sm:text-sm text-slate-300 leading-relaxed"></p>
+            </div>
+
+            <!-- Action Button -->
+            <div class="pt-2 flex justify-end">
+                <button id="action-btn" onclick="handleAction()" disabled class="px-8 py-3.5 bg-slate-800 text-slate-400 font-semibold rounded-xl cursor-not-allowed transition-all">
+                    Submit Answer
+                </button>
+            </div>
+        </div>
+
+        <!-- RESULTS SCREEN -->
+        <div id="results-screen" class="hidden glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl space-y-8 animate-fadeIn">
+            <div class="text-center space-y-3">
+                <div class="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-amber-500/20 border border-amber-500/30 text-amber-400 text-3xl mb-2 shadow-inner">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <h2 id="tier-title" class="text-2xl sm:text-3xl font-extrabold text-white">Personal Information Expert</h2>
+                <p class="text-xs sm:text-sm text-slate-400">Here is a summary of your quiz performance.</p>
+            </div>
+
+            <!-- Score Cards Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+                <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl">
+                    <p class="text-xs text-slate-400">Final Score</p>
+                    <p id="res-score" class="text-xl sm:text-2xl font-bold text-indigo-400 mt-1">50 / 50</p>
+                </div>
+                <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl">
+                    <p class="text-xs text-slate-400">Accuracy</p>
+                    <p id="res-mastery" class="text-xl sm:text-2xl font-bold text-emerald-400 mt-1">100%</p>
+                </div>
+                <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl">
+                    <p class="text-xs text-slate-400">Time Taken</p>
+                    <p id="res-time" class="text-xl sm:text-2xl font-bold text-amber-400 mt-1">00:30</p>
+                </div>
+                <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-2xl">
+                    <p class="text-xs text-slate-400">Correct</p>
+                    <p id="res-correct" class="text-xl sm:text-2xl font-bold text-violet-400 mt-1">5 / 5</p>
+                </div>
+            </div>
+
+            <!-- Detailed Question Breakdown Summary -->
+            <div class="space-y-4">
+                <h3 class="text-base font-bold text-white border-b border-slate-800 pb-2">Question Breakdown Summary</h3>
+                <div id="breakdown-list" class="space-y-3 max-h-96 overflow-y-auto pr-2">
+                    <!-- Breakdown items injected via JS -->
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-3 pt-4 no-print">
+                <button onclick="retakeQuiz()" class="flex-1 py-3.5 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl border border-slate-700 transition-all cursor-pointer flex items-center justify-center space-x-2">
+                    <i class="fas fa-redo"></i> <span>Retake Quiz</span>
+                </button>
+                <button onclick="window.print()" class="flex-1 py-3.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold rounded-xl shadow-lg shadow-indigo-600/30 transition-all cursor-pointer flex items-center justify-center space-x-2">
+                    <i class="fas fa-print"></i> <span>Print / Save PDF</span>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        const quizData = [
+            {
+                question: "Complete the question: \"What is your ________?\"",
+                clozeAnswer: "name",
+                isCorrectFn: (val) => val.trim().toLowerCase() === "name",
+                rationale: "We ask 'What is your name?' to know how to call someone.",
+                hint: "Your given identifier."
+            },
+            {
+                question: "Complete the sentence: \"My ________ name is Smith.\"",
+                clozeAnswer: "last",
+                isCorrectFn: (val) => val.trim().toLowerCase() === "last",
+                rationale: "Your family name is your last name.",
+                hint: "The name that comes after your first name."
+            },
+            {
+                question: "Complete the question: \"What is your ________ security number?\"",
+                clozeAnswer: "social",
+                isCorrectFn: (val) => val.trim().toLowerCase() === "social",
+                rationale: "An SSN is a government identification number.",
+                hint: "Relates to government and taxes."
+            },
+            {
+                question: "Complete the question: \"What is your driver's ________?\"",
+                clozeAnswer: "license",
+                isCorrectFn: (val) => val.trim().toLowerCase() === "license",
+                rationale: "A driver's license lets you drive a car.",
+                hint: "Official card for driving."
+            },
+            {
+                question: "Complete the question: \"________ phone number?\"",
+                clozeAnswer: "What is your",
+                isCorrectFn: (val) => ["what is your", "whats your", "what's your"].includes(val.trim().toLowerCase()),
+                rationale: "We ask 'What is your phone number?' to request contact information.",
+                hint: "Three words asking for your number."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let timerSeconds = 0;
+        let timerInterval = null;
+        let userAnswersHistory = [];
+        let isSubmitted = false;
+        let hintVisible = false;
+
+        function startQuiz() {
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('top-stats').classList.remove('hidden');
+            document.getElementById('top-stats').classList.add('flex');
+
+            timerSeconds = 0;
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timerSeconds++;
+                let mins = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+                let secs = (timerSeconds % 60).toString().padStart(2, '0');
+                document.getElementById('timer-display').innerHTML = `<i class="fas fa-clock text-indigo-400 mr-2"></i> ${mins}:${secs}`;
+            }, 1000);
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            isSubmitted = false;
+            hintVisible = false;
+            document.getElementById('hint-box').classList.add('hidden');
+            document.getElementById('hint-toggle-text').innerText = "Show Hint";
+            document.getElementById('feedback-box').classList.add('hidden');
+            
+            const q = quizData[currentQuestionIndex];
+            document.getElementById('question-counter').innerText = `Question ${currentQuestionIndex + 1} of ${quizData.length}`;
+            document.getElementById('question-text').innerText = q.question;
+
+            let pct = ((currentQuestionIndex) / quizData.length) * 100;
+            document.getElementById('progress-bar').style.width = `${pct}%`;
+
+            if (q.hint) {
+                document.getElementById('hint-container').classList.remove('hidden');
+                document.getElementById('hint-text').innerText = q.hint;
+            } else {
+                document.getElementById('hint-container').classList.add('hidden');
+            }
+
+            renderAnswerContainer(q);
+            updateActionButton(false, "Submit Answer");
+        }
+
+        function toggleHint() {
+            hintVisible = !hintVisible;
+            const box = document.getElementById('hint-box');
+            const txt = document.getElementById('hint-toggle-text');
+            if (hintVisible) {
+                box.classList.remove('hidden');
+                txt.innerText = "Hide Hint";
+            } else {
+                box.classList.add('hidden');
+                txt.innerText = "Show Hint";
+            }
+        }
+
+        function renderAnswerContainer(q) {
+            const container = document.getElementById('answer-container');
+            container.innerHTML = '';
+
+            const wrapper = document.createElement('div');
+            wrapper.className = "space-y-4";
+            const input = document.createElement('input');
+            input.type = "text";
+            input.id = "cloze-input";
+            input.placeholder = "...";
+            input.className = "w-full p-4 rounded-2xl bg-slate-950 border border-slate-800 text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-colors";
+            input.oninput = (e) => {
+                updateActionButton(e.target.value.trim().length > 0, "Submit Answer");
+            };
+            wrapper.appendChild(input);
+            container.appendChild(wrapper);
+            setTimeout(() => input.focus(), 100);
+        }
+
+        function updateActionButton(enabled, text) {
+            const btn = document.getElementById('action-btn');
+            if (!btn) return;
+            btn.innerText = text;
+            if (enabled) {
+                btn.disabled = false;
+                btn.className = "px-8 py-3.5 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-base rounded-xl shadow-lg shadow-indigo-600/30 transition-all cursor-pointer";
+            } else {
+                btn.disabled = true;
+                btn.className = "px-8 py-3.5 bg-slate-800 text-slate-400 font-semibold rounded-xl cursor-not-allowed transition-all";
+            }
+        }
+
+        function handleAction() {
+            if (!isSubmitted) {
+                submitAnswer();
+            } else {
+                nextQuestion();
+            }
+        }
+
+        function submitAnswer() {
+            isSubmitted = true;
+            const q = quizData[currentQuestionIndex];
+            const inputEl = document.getElementById('cloze-input');
+            const val = inputEl ? inputEl.value : "";
+            
+            let userAnswerText = val;
+            let correctAnswerText = q.clozeAnswer;
+            let isCorrect = q.isCorrectFn(val);
+
+            if (isCorrect) {
+                score += 10;
+                document.getElementById('current-score').innerText = score;
+            }
+
+            userAnswersHistory.push({
+                question: q.question,
+                userAnswer: userAnswerText,
+                correctAnswer: correctAnswerText,
+                isCorrect: isCorrect,
+                rationale: q.rationale
+            });
+
+            const feedbackBox = document.getElementById('feedback-box');
+            feedbackBox.classList.remove('hidden');
+            const icon = document.getElementById('feedback-icon');
+            const title = document.getElementById('feedback-title');
+            const rationaleEl = document.getElementById('feedback-rationale');
+
+            if (isCorrect) {
+                feedbackBox.className = "p-4 rounded-2xl border bg-emerald-500/10 border-emerald-500/30 text-emerald-300 text-sm space-y-2 animate-fadeIn";
+                icon.className = "fas fa-check-circle text-emerald-400";
+                title.innerText = "Correct!";
+            } else {
+                feedbackBox.className = "p-4 rounded-2xl border bg-rose-500/10 border-rose-500/30 text-rose-300 text-sm space-y-2 animate-fadeIn";
+                icon.className = "fas fa-times-circle text-rose-400";
+                title.innerText = "Incorrect!";
+            }
+            rationaleEl.innerText = q.rationale;
+
+            let isLast = (currentQuestionIndex === quizData.length - 1);
+            updateActionButton(true, isLast ? "View Results" : "Next Question");
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            clearInterval(timerInterval);
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('top-stats').classList.add('hidden');
+            document.getElementById('results-screen').classList.remove('hidden');
+
+            let maxScore = quizData.length * 10;
+            let mastery = Math.round((score / maxScore) * 100);
+            let correctCount = userAnswersHistory.filter(h => h.isCorrect).length;
+
+            document.getElementById('res-score').innerText = `${score} / ${maxScore}`;
+            document.getElementById('res-mastery').innerText = `${mastery}%`;
+            
+            let mins = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+            let secs = (timerSeconds % 60).toString().padStart(2, '0');
+            document.getElementById('res-time').innerText = `${mins}:${secs}`;
+            document.getElementById('res-correct').innerText = `${correctCount} / ${quizData.length}`;
+
+            let tier = "Confident Communicator";
+            if (mastery >= 90) tier = "Personal Information Expert";
+            document.getElementById('tier-title').innerText = tier;
+
+            const breakdownList = document.getElementById('breakdown-list');
+            breakdownList.innerHTML = '';
+            userAnswersHistory.forEach((item, idx) => {
+                const div = document.createElement('div');
+                div.className = "p-4 rounded-2xl bg-slate-900/80 border border-slate-800 text-xs sm:text-sm space-y-2";
+                div.innerHTML = `
+                    <div class="flex items-start justify-between">
+                        <span class="font-bold text-white">Q${idx + 1}: ${item.question}</span>
+                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${item.isCorrect ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'}">
+                            ${item.isCorrect ? 'Correct' : 'Missed'}
+                        </span>
+                    </div>
+                    <div class="text-slate-300 space-y-1">
+                        <p><strong class="text-slate-400">Your Answer:</strong> <span class="${item.isCorrect ? 'text-emerald-300' : 'text-rose-300'}">${escapeHtml(item.userAnswer || '(No answer)')}</span></p>
+                        ${!item.isCorrect ? `<p><strong class="text-slate-400">Correct Answer:</strong> <span class="text-emerald-300">${escapeHtml(item.correctAnswer)}</span></p>` : ''}
+                        <p class="text-slate-400 italic text-xs pt-1"><strong class="not-italic text-indigo-300">Rationale:</strong> ${item.rationale}</p>
+                    </div>
+                `;
+                breakdownList.appendChild(div);
+            });
+        }
+
+        function escapeHtml(str) {
+            return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        function retakeQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswersHistory = [];
+            document.getElementById('results-screen').classList.add('hidden');
+            startQuiz();
+        }
+
+        // Global Enter key support
+        window.addEventListener('keydown', (e) => {
+            if (e.key === "Enter") {
+                const welcomeScreen = document.getElementById('welcome-screen');
+                const quizScreen = document.getElementById('quiz-screen');
+                const resultsScreen = document.getElementById('results-screen');
+
+                if (!welcomeScreen.classList.contains('hidden')) {
+                    startQuiz();
+                } else if (!quizScreen.classList.contains('hidden')) {
+                    const actionBtn = document.getElementById('action-btn');
+                    if (actionBtn && !actionBtn.disabled) {
+                        handleAction();
+                    }
+                } else if (!resultsScreen.classList.contains('hidden')) {
+                    retakeQuiz();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
